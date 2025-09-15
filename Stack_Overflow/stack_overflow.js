@@ -1,11 +1,3 @@
-import React from 'react'
-
-const stack_overflow = () => {
-  return (
-    <div>
-      Stack Overflow
-    </div>
-  )
+class StackOverFlow {
+  constructor() {}
 }
-
-export default stack_overflow
