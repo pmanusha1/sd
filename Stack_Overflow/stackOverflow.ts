@@ -145,12 +145,16 @@ class Member extends User {
   account: Account
   badges: Badge[]
   questions: Question[]
+  title: string
+  body: string
 
-  constructor(id: number, search: Search, account: Account, badges: Badge[] = []) {
+  constructor(id: number, search: Search, account: Account, badges: Badge[] = [], title: string, body: string) {
     super(id, search)
     this.account = account
     this.badges = badges
     this.questions = []
+    this.title = title
+    this.body = body
   }
 
   addQuestion(question: Question) {
@@ -228,7 +232,7 @@ user.addVote(question, vote)
 const User2Account = new Account(44, 'lavi', 'lavi@gmail.com', AccountStatus.active)
 const user2 = new Member(40, search, User2Account, [])
 
-const comment = new PostComment(808, user2, new Date(), [], "This is important question")
+const comment = new PostComment(808, user2, new Date(), [], [], "This is important question")
 question.addComment(comment)
 
 const adminAccount = new Account(60, 'admin', 'admin@gmail.com', AccountStatus.active)

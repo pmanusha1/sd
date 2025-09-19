@@ -95,10 +95,12 @@ class Entity {
 }
 
 class Question extends Entity {
-  constructor(id, creator, createdDate, votes, comments = [], answers = [], tags = []) {
+  constructor(id, creator, createdDate, votes, comments = [], answers = [], tags = [], title, body) {
     super(id, creator, createdDate, votes, comments)
     this.answers = answers
     this.tags = tags
+    this.title = title
+    this.body = body
   }
 
   addAnswer(answer) {
@@ -106,6 +108,19 @@ class Question extends Entity {
   }
   addTag(tag) {
     this.tags.push(tag)
+  }
+
+  display() {
+    const answersText = this.answers.map(answer => `- ${answer.answer}`).join('\n') 
+    const CommentText = this.comments.map(comment => `-${comment.message}`).join('\n')
+
+    return `Question ID: ${this.id}
+      Title: ${this.title}
+      Body: ${this.body}
+      Tags: ${this.tags.map(t => t.tag).join(", ")}
+      Votes: ${this.votes.length}
+      Answers: ${answersText}
+      Comments: ${CommentText}\n`
   }
 }
 
@@ -116,7 +131,7 @@ class Answer extends Entity {
   }
 }
 
-class Comment extends Entity {
+class PostComment extends Entity {
   constructor(id, creator, createdDate, votes, comments = [], message){
     super(id, creator, createdDate, votes, comments)
     this.message = message
@@ -143,3 +158,48 @@ class Search {
     )
   }
 }
+
+const search = new Search()
+
+const userAccount = new Account(76, 'manusha', 'manusha@gmail.com', AccountStatus.active)
+
+const user = new Member(123, search, userAccount, [])
+
+const badge = new Badge('Good', 'Good')
+user.getBadge(badge)
+
+const vote = new Vote(user, 1, new Date())
+
+const question = new Question(
+  90,
+  user,
+  new Date(),
+  [],
+  [],
+  [],
+  [],
+  "What is System Designs?",
+  "Can someone explain what system designs means in software engineering?"
+)
+user.addQuestion(question)
+user.addVote(question, vote)
+
+const User2Account = new Account(44, 'lavi', 'lavi@gmail.com', AccountStatus.active)
+const user2 = new Member(40, search, User2Account, [])
+
+const comment = new PostComment(808, user2, new Date(), [], "This is important question")
+question.addComment(comment)
+
+const adminAccount = new Account(60, 'admin', 'admin@gmail.com', AccountStatus.active)
+const admin = new Admin(70, search, adminAccount, [])
+
+const answer = new Answer(80, admin, new Date(), [], [], 'Asnwer to the Question')
+question.addAnswer(answer)
+answer.addComment(comment)
+user.addVote(answer, vote)
+
+const tag = new Tag('System Designs')
+question.addTag(tag)
+
+const result = user.search.searchByTag("System Designs", user.questions)
+result.forEach(q => console.log(q.display()))
