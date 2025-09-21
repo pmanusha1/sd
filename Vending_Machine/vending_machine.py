@@ -20,6 +20,20 @@ class VendingMachine:
     
     def sendNotificationToAdmin(self, message):
         print(f"Sending notification to admin: {message}")
+    
+    def addItem(self, item):
+        self.items.append(item)
+    
+    def removeItem(self, item):
+        self.items = [i for i in machine.items if i.id != item.id]
+        return self.items
+    
+    def updateItemPrice(self, item, price):
+        for ele in self.items:
+            if ele.id == item.id:
+                ele.price = price
+                return True
+        return False
 
 @dataclass
 class Address:
@@ -35,29 +49,9 @@ class Item:
     qty: int
 
 @dataclass
-class Person:
+class User():
     id: int
 
-@dataclass
-class Admin(Person):
-    name: str
-
-    def addItem(self, machine, item):
-        machine.items.append(item)
-    
-    def removeItem(self, machine, item):
-        machine.items = [i for i in machine.items if i.id != item.id]
-        return machine.items
-    
-    def updateItemPrice(self, machine, item, price):
-        for ele in machine.items:
-            if ele.id == item.id:
-                ele.price = price
-                return True
-        return False
-
-@dataclass
-class User(Person):
     def selectItems(self, machine, selected_items):
         selected = []
         for item, qty in selected_items:
@@ -79,6 +73,19 @@ class User(Person):
         print(f"Payment of ₹{amount} successful.")
         return True
 
+@dataclass
+class Admin(User):
+    name: str
+
+    def addItem(self, machine, item):
+        machine.addItem(item)
+    
+    def removeItem(self, machine, item):
+        machine.removeItem(item)
+    
+    def updateItemPrice(self, machine, item, price):
+        return machine.updateItemPrice(item, price)
+
 
 address = Address(2, 's8', 'wipro')
 
@@ -95,7 +102,7 @@ admin.addItem(machine, item2)
 admin.updateItemPrice(machine, item1, 35)
 
 user = User(123)
-selected = user.selectItems(machine, [(item1, 6), (item2, 2)])
+selected = user.selectItems(machine, [(item1, 5), (item2, 2)])
 cost = user.getCostOfItems(selected)
 if user.payment(cost):
     machine.dispenseItem(selected)
